@@ -6,7 +6,12 @@ new Vue({
     data: {
         inputText: "",
         outputText: "",
-        abbreviations: { "et al.": "達", "Sec.": "セクション", "Fig.": "図" },
+        abbreviations: {
+            "et al\\.": "達",
+            "Sec\\.": "セクション",
+            "Fig\\.": "図",
+            "Eq\\.": "式",
+        },
     },
     watch: {
         inputText: function (newText) {
@@ -42,8 +47,11 @@ new Vue({
                     var re = new RegExp(this.abbreviations[abbr], "g");
 
                     // Replace all occurrences of the abbreviation
-                    sentences[i] = sentences[i].replace(re, abbr);
+                    unescapedAbbr = abbr.replace(/\\/g, "");
+                    sentences[i] = sentences[i].replace(re, unescapedAbbr);
                 }
+                // Replace spaces introduced at the end of lines due to abbreviation replacement
+                sentences[i] = sentences[i].replace(/ +$/g, "");
             }
 
             return sentences.join("\n\n");
